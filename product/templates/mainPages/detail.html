@@ -1,0 +1,287 @@
+{% extends 'mainPages/base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{ product.name }} - Product Detail</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="container">
+  <div class="product-detail-card">
+    <div class="image-section">
+      <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="main-image"/>
+    </div>
+
+    <div class="info-section">
+      <h1>{{ product.name }}</h1>
+      <p class="brand">Brand: {{ product.brand.name }}</p>
+      <p class="category">Category: {{ product.category.name }}</p>
+      <p class="price">${{ product.price }} </p>
+      <p class="description">{{ product.description }}</p>
+
+      <p class="stock {% if product.stock_quantity == 0 %}out-of-stock{% endif %}">
+        {% if product.stock_quantity > 0 %}
+        In stock: {{ product.stock_quantity }}
+        {% else %}
+        Out of stock
+        {% endif %}
+      </p>
+
+      <div class="gender">
+        Gender:
+        {% if product.gender == 'M' %} Male
+        {% elif product.gender == 'F' %} Female
+        {% elif product.gender == 'U' %} Unisex%}
+        {% else %} Kids
+        {% endif %}
+      </div>
+
+      <div class="colors">
+        <span>Colors:</span>
+        <div class="color-list">
+          {% for color in product.color.all %}
+          <div class="color-item" data-color-id="{{ color.id }}" style="cursor: pointer;">
+            <span class="color-circle" style="background-color: {{ color.hex_code|default:color.color }}"></span>
+            <span class="color-name">{{ color.color }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="sizes">
+        Sizes:
+        <div class="size-options">
+          {% for size in product.available_sizes.all %}
+          <button class="size-btn" data-size-id="{{ size.id }}" type="button">{{ size.code }}</button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <form id="add-to-cart-form" method="POST" action="{% url 'add_to_cart' product.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="product_id" value="{{ product.id }}">
+        <input type="hidden" name="color_id" id="selected-color" value="">
+        <input type="hidden" name="size_id" id="selected-size" value="">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="add-to-cart-btn">Добавить в корзину</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Color selection
+    const colorItems = document.querySelectorAll('.color-item');
+    colorItems.forEach(item => {
+      item.addEventListener('click', function() {
+        colorItems.forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('selected-color').value = this.dataset.colorId;
+      });
+    });
+
+    // Size selection
+    const sizeButtons = document.querySelectorAll('.size-btn');
+    sizeButtons.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        sizeButtons.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('selected-size').value = this.dataset.sizeId;
+      });
+    });
+
+    // Form validation
+    document.getElementById('add-to-cart-form').addEventListener('submit', function(e) {
+      const colorId = document.getElementById('selected-color').value;
+      const sizeId = document.getElementById('selected-size').value;
+
+      if (!colorId || !sizeId) {
+        e.preventDefault();
+        alert('Пожалуйста, выберите цвет и размер');
+      }
+    });
+  });
+</script>
+
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f5f5f7;
+    padding: 30px;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .product-detail-card {
+    display: flex;
+    gap: 40px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 30px;
+    flex-wrap: wrap;
+  }
+
+  .image-section {
+    flex: 1 1 300px;
+  }
+
+  .main-image {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
+  .info-section {
+    flex: 2 1 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .price {
+    font-size: 1.8rem;
+    color: #27ae60;
+    font-weight: bold;
+  }
+
+  .description {
+    color: #555;
+  }
+
+  .stock {
+    font-weight: bold;
+  }
+
+  .out-of-stock {
+    color: red;
+  }
+
+  .color-circle {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid #aaa;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .size-options {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+  }
+
+  .size-btn {
+    background: #eee;
+    border: 2px solid transparent;
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .size-btn:hover {
+    background: #ddd;
+    border-color: #bbb;
+  }
+
+  .size-btn.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+
+  .add-to-cart-btn {
+    margin-top: 20px;
+    background: #007bff;
+    color: white;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .add-to-cart-btn:hover {
+    background: #0056b3;
+  }
+
+  .color-list {
+    display: flex;
+    gap: 12px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .color-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+  }
+
+  .color-item:hover {
+    background-color: #f0f0f0;
+  }
+
+  .color-item.active {
+    border-color: #007bff;
+    background-color: #e3f2fd;
+  }
+
+  .color-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+  }
+
+  .color-item:hover .color-circle {
+    transform: scale(1.1);
+  }
+
+  .color-item.active .color-circle {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.3);
+  }
+
+  .color-name {
+    margin-top: 4px;
+    color: #444;
+    font-size: 0.75rem;
+  }
+
+
+</style>
+{% endblock %}

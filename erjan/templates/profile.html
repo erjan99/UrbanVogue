@@ -1,51 +1,105 @@
-{% extends 'mainPages/base.html' %}
+{% extends "mainPages/base.html" %}
 {% load static %}
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow-sm p-4">
-        <h2 class="mb-4 text-success">My Profile</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <!-- Avatar -->
+                        {% if user.avatar %}
+                        <div class="avatar-container rounded-circle border mb-3 d-flex justify-content-center align-items-center overflow-hidden" style="width: 150px; height: 150px; margin: 0 auto;">
+                            <img src="{{ user.avatar.url }}" class="img-fluid" alt="User Avatar">
+                        </div>
+                        {% else %}
+                        <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" class="rounded-circle border mb-3" style="width: 150px; height: 150px;" alt="Default Avatar">
+                        {% endif %}
 
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show small py-2 px-3" role="alert">
-            {{ message }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+                        <!-- Username and Email -->
+                        <h3 class="mb-0">{{ user.username }}</h3>
+                        <p class="text-muted">{{ user.email }}</p>
+
+                        <!-- Account Status Badges -->
+                        <div class="mb-3">
+                            <span class="badge bg-success">{{ user.is_active|yesno:"Active,Inactive" }}</span>
+                            {% if user.is_admin %}
+                            <span class="badge bg-dark">Admin</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- About User Section - Enhanced -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="fas fa-user-circle me-2"></i>About Me
+                        </h5>
+                        <div class="about-user-section p-3 bg-light rounded">
+                            {% if user.about_user %}
+                                <p class="mb-0 text-muted fst-italic">{{ user.about_user }}</p>
+                            {% else %}
+                                <p class="mb-0 text-muted fst-italic">No bio available. Edit your profile to add some information about yourself.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- User Details -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted">Account Balance</h6>
+                                    <h4 class="card-text">${{ user.balance }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted">2FA Authentication</h6>
+                                    <form method="post" action="{% url 'change_2fa' %}" class="form-check">
+                                        {% csrf_token %}
+                                        <input type="checkbox" class="form-check-input" id="2faToggle" name="choice"
+                                               {% if user.is_2fa_enabled %}checked{% endif %} onchange="this.form.submit()">
+                                        <label class="form-check-label" for="2faToggle">
+                                            {% if user.is_2fa_enabled %}Enabled{% else %}Disabled{% endif %}
+                                        </label>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Edit button -->
+                    <div class="text-center mt-3">
+                        <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
         </div>
-        {% endfor %}
-        {% endif %}
-
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="form-group mb-3">
-                <label for="id_username">Username</label>
-                {{ form.username }}
-            </div>
-
-            <div class="form-group mb-3">
-                <label for="id_email">Email</label>
-                {{ form.email }}
-            </div>
-
-            <div class="form-group mb-3">
-                <label for="id_avatar">Avatar</label><br>
-                {% if user.avatar %}
-                <img src="{{ user.avatar.url }}" class="profile-avatar" alt="Avatar"><br>
-                {% endif %}
-                {{ form.avatar }}
-            </div>
-
-            <div class="form-check mb-3">
-                {{ form.is_2fa_enabled }} <label for="id_is_2fa_enabled">Enable 2FA</label>
-            </div>
-
-            <div class="mb-3">
-                <strong>Balance:</strong> ${{ user.balance }}
-            </div>
-
-            <button type="submit" class="btn btn-success">Update Profile</button>
-        </form>
     </div>
 </div>
+
+<style>
+    .avatar-container {
+        position: relative;
+        background-color: #f8f9fa;
+    }
+
+    .avatar-container img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+
+    .about-user-section {
+        border-left: 4px solid #007bff;
+        transition: all 0.3s ease;
+    }
+
+    .about-user-section:hover {
+        background-color: #e9ecef !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+</style>
 {% endblock %}

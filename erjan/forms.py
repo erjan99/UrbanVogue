@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from.models import MyUser
+from .models import MyUser
 
 class RegisterForm(UserCreationForm):
 
@@ -14,10 +14,10 @@ class LoginForm(forms.Form):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
 
-class ProfileUpdateForm(forms.ModelForm):
+class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = MyUser
-        fields = ['username', 'email', 'avatar', 'is_2fa_enabled']
+        fields = ['username', 'email', 'avatar']
         widgets = {
             'email': forms.EmailInput(attrs={'readonly': 'readonly', 'class': 'form-control'}),
             'username': forms.TextInput(attrs={'class': 'form-control'}),
@@ -25,3 +25,18 @@ class ProfileUpdateForm(forms.ModelForm):
             'is_2fa_enabled': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = MyUser
+        fields = ['username', 'email', 'about_user', 'avatar']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'about_user': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Tell us about yourself...'
+            }),
+            'avatar': forms.FileInput(attrs={'class': 'form-control'}),
+        }

@@ -134,7 +134,9 @@
              data-toggle="dropdown"
              aria-haspopup="true"
              aria-expanded="false">
-            <i class="fa fa-fw fa-user text-dark"></i>
+            {% if request.user.is_authenticated and request.user.avatar %}
+              <img src="{{ request.user.avatar.url }}" alt="Avatar" class="rounded-circle ml-1" style="width:28px; height:28px; object-fit:cover; vertical-align:middle;">
+            {% endif %}
           </a>
 
           <div class="dropdown-menu dropdown-menu-end user-dropdown-menu" aria-labelledby="userDropdown">

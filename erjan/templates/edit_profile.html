@@ -1,0 +1,64 @@
+{% extends "mainPages/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Edit Profile</h3>
+
+                    {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            {{ form.username }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">Email</label>
+                            {{ form.email }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_about_user" class="form-label">About Me</label>
+                            {{ form.about_user }}
+                            <div class="form-text">Share something interesting about yourself!</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_avatar" class="form-label">Avatar</label>
+                            {{ form.avatar }}
+                            {% if user.avatar %}
+                            <div class="mt-2">
+                                <div class="avatar-container rounded-circle border mb-3 d-flex justify-content-center align-items-center overflow-hidden" style="width: 100px; height: 100px; margin: 0 auto;">
+                                    <img src="{{ user.avatar.url }}" alt="Current Avatar" class="img-fluid">
+                                </div>
+                                <p class="small text-muted">Current avatar</p>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a href="{% url 'profile_view' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

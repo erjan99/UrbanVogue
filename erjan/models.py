@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 
 
+
 class MyUserManager(BaseUserManager):
     def create_user(self, username, email, password=None):
         if not email:
@@ -35,6 +36,7 @@ class MyUser(AbstractBaseUser):
     email = models.EmailField(max_length=255, unique=True)
     avatar = models.ImageField(upload_to='media/avatars/', null=True, blank=True)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    about_user = models.TextField(null=True, blank=True)
 
     otp = models.CharField(max_length=6, null=True, blank=True)
     is_2fa_enabled = models.BooleanField(default=False)
@@ -66,3 +68,7 @@ class MyUser(AbstractBaseUser):
         """Is the user a member of staff?"""
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+
+
+
