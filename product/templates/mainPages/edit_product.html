@@ -1,0 +1,249 @@
+{% extends 'mainPages/base.html'  %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h3 class="card-title mb-0 text-center">
+                        <i class="fas fa-plus-circle me-2"></i>Edit Product
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Product Name -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Product Name</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.name.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Description</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.description.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Category</label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.category.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Brand with Datalist -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Brand</label>
+                            {{ form.brand_name }}
+                            <datalist id="brand-options">
+                                {% for brand in brands %}
+                                <option value="{{ brand.name }}"></option>
+                                {% endfor %}
+                            </datalist>
+                            <div class="form-text">
+                                Select from suggestions or enter a new brand name.
+                            </div>
+                            {% if form.brand_name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.brand_name.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Price -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                {{ form.price }}
+                            </div>
+                            {% if form.price.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.price.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Available Sizes -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Available Sizes</label>
+                            <div class="row">
+                                {% for choice in form.available_sizes %}
+                                <div class="col-md-2 col-sm-3 col-4 mb-2">
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.available_sizes.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.available_sizes.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Available Colors -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Available Colors</label>
+                            <div class="row">
+                                {% for color in colors %}
+                                <div class="col-md-3 col-sm-4 col-6 mb-2">
+                                    <div class="form-check d-flex align-items-center gap-2">
+                                        <input class="form-check-input" type="checkbox" name="available_colors" value="{{ color.id }}"
+                                               id="color_{{ color.id }}"
+                                               {% if color in product.available_colors.all %}checked{% endif %}>
+                                        <label class="form-check-label d-flex align-items-center" for="color_{{ color.id }}">
+                                            <span class="rounded-circle d-inline-block me-2"
+                                                  style="width: 20px; height: 20px; background-color: {{ color.hex_code }}; border: 1px solid #888;"></span>
+                                            {{ color.color }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.available_colors.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.available_colors.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Gender</label>
+                            <div class="d-flex flex-wrap gap-3">
+                                {% for radio in form.gender %}
+                                <div class="form-check">
+                                    {{ radio.tag }}
+                                    <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                        {{ radio.choice_label }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.gender.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.gender.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Product Image</label>
+                            {% if product.main_image %}
+                            <div class="mb-2">
+                                <img src="{{ product.main_image.url }}" alt="Current image" class="img-thumbnail" style="max-height: 150px;">
+                                <p class="text-muted small">Current image. Upload a new one to replace it.</p>
+                            </div>
+                            {% endif %}
+                            {{ form.main_image }}
+                            <div class="form-text">
+                                Upload a high-quality image (JPG, PNG, GIF)
+                            </div>
+                            {% if form.main_image.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.main_image.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                            <a href="{% url 'user_products' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .card {
+        border-radius: 15px;
+    }
+
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 2px solid #e3e6f0;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .btn-lg {
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 600;
+    }
+
+    .form-check-input:checked {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .invalid-feedback {
+        font-size: 0.875rem;
+    }
+
+    .form-label {
+        color: #5a5c69;
+        margin-bottom: 8px;
+    }
+
+    .input-group-text {
+        border-radius: 8px 0 0 8px;
+        border: 2px solid #e3e6f0;
+        border-right: none;
+    }
+
+    .color-swatch {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease;
+    }
+
+    .form-check:hover .color-swatch {
+        transform: scale(1.1);
+    }
+
+    .form-check-input:checked + .form-check-label .color-swatch {
+        border-color: #007bff;
+        border-width: 3px;
+    }
+</style>
+{% endblock %}

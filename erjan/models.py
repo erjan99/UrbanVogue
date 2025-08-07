@@ -30,12 +30,11 @@ class MyUserManager(BaseUserManager):
 
 
 
-
 class MyUser(AbstractBaseUser):
     username = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True)
     avatar = models.ImageField(upload_to='media/avatars/', null=True, blank=True)
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    balance = models.FloatField(default=0, )
     about_user = models.TextField(null=True, blank=True)
 
     otp = models.CharField(max_length=6, null=True, blank=True)

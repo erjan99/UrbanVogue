@@ -16,6 +16,7 @@
 
   <!-- Load fonts style after rendering the layout styles -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
   <link rel="stylesheet" href="{% static 'assets/css/fontawesome.min.css' %}">
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -84,7 +85,7 @@
 <nav class="navbar navbar-expand-lg navbar-light shadow">
   <div class="container d-flex justify-content-between align-items-center">
 
-    <a class="navbar-brand text-success logo h1 align-self-center" href="{% url 'index_view' %}">
+    <a class="navbar-brand text-success logo h1 align-self-center" href="{% url 'index_view' %}" style="color: #0172ff; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
       Urban Vogue
     </a>
 
@@ -99,13 +100,13 @@
             <a class="nav-link" href="{% url 'index_view' %}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% static 'about.html' %}">About</a>
+            <a class="nav-link" href="#">About</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% static 'shop.html' %}">Shop</a>
+            <a class="nav-link" href="{% url 'index_view' %}">Shop</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% static 'contact.html' %}">Contact</a>
+            <a class="nav-link" href="#">Contact</a>
           </li>
         </ul>
       </div>
@@ -118,12 +119,18 @@
             </div>
           </div>
         </div>
-        <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
+        <a class="nav-icon d-none d-lg-inline" href="{% url 'filtered_products' %}" data-bs-toggle=modal" data-bs-target="#templatemo_search">
           <i class="fa fa-fw fa-search text-dark mr-2"></i>
         </a>
-        <a class="nav-icon position-relative text-decoration-none" href="#">
+        <a class="nav-icon position-relative text-decoration-none" href="{% url 'cart_view' %}">
           <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-          <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">7</span>
+          <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">
+              {% if request.user.is_authenticated and request.user.cart_set.first %}
+                {{ request.user.cart_set.first.orders.count }}
+              {% else %}
+                0
+              {% endif %}
+          </span>
         </a>
 
         <div class="dropdown user-dropdown" style="display: inline-block;">
@@ -136,6 +143,8 @@
              aria-expanded="false">
             {% if request.user.is_authenticated and request.user.avatar %}
               <img src="{{ request.user.avatar.url }}" alt="Avatar" class="rounded-circle ml-1" style="width:28px; height:28px; object-fit:cover; vertical-align:middle;">
+            {% elif request.user.is_authenticated and not request.user.avatar %}
+            <img src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0=" alt="Avatar" class="rounded-circle ml-1" style="width:28px; height:28px; object-fit:cover; vertical-align:middle;">
             {% endif %}
           </a>
 
@@ -143,11 +152,14 @@
             {% if request.user.is_authenticated %}
             <div class="user-info-dropdown">
               <div class="user-name"><strong>{{ request.user.username }}</strong></div>
+              <div class="user-name" style="font-size: 10px"><strong>${{ request.user.balance }}</strong></div>
               <div class="user-email">{{ request.user.email }}</div>
             </div>
             <div class="dropdown-divider"></div>
             <a href="{% url 'profile_view' %}"><div class="dropdown-item">Profile</div></a>
-            <a href="#"><div class="dropdown-item">Settings</div></a>
+            <a href="{% url 'top_up_view' %}"><div class="dropdown-item">Top up balance</div></a>
+            <a href="{% url 'create_product' %}"><div class="dropdown-item">Sell Product</div></a>
+            <a href="{% url 'user_products' %}"><div class="dropdown-item">My Sales</div></a>
             <a href="{% url 'logout_view' %}"><div class="dropdown-item">Logout</div></a>
             {% else %}
             <a href="{% url 'login_view' %}"><div class="dropdown-item">Log In</div></a>
@@ -227,6 +239,20 @@
         margin: 8px 0;
       }
 
+      .h2.text-success,
+      .logo.text-success,
+      .btn-success,
+      .input-group-text.btn-success,
+      .bg-success {
+        background-color: #0172ff !important;
+        border: none !important;
+        color: #fff !important;
+      }
+      .h2.text-success {
+        background: none;
+        color: #0172ff;
+      }
+
     </style>
 
   </div>
@@ -240,7 +266,7 @@
     <div class="row">
 
       <div class="col-md-4 pt-5">
-        <h2 class="h2 text-success border-bottom pb-3 border-light logo">Urban Vogue</h2>
+        <h2 class="h2 text-success border-bottom pb-3 border-light logo" style="color: #0172ff !important;background-color: #343a3f !important;">Urban Vogue</h2>
         <ul class="list-unstyled text-light footer-link-list">
           <li>
             <i class="fas fa-map-marker-alt fa-fw"></i>
@@ -303,13 +329,6 @@
           </li>
         </ul>
       </div>
-      <div class="col-auto">
-        <label class="sr-only" for="subscribeEmail">Email address</label>
-        <div class="input-group mb-2">
-          <input type="text" class="form-control bg-dark border-light" id="subscribeEmail" placeholder="Email address">
-          <div class="input-group-text btn-success text-light">Subscribe</div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -319,7 +338,7 @@
         <div class="col-12">
           <p class="text-left text-light">
             Copyright &copy; 2021 Company Name
-            | Designed by <a rel="sponsored" href="https://templatemo.com" target="_blank">TemplateMo</a>
+            | Designed by <a rel="sponsored" href="https://templatemo.com" target="_blank">Erjan</a>
           </p>
         </div>
       </div>

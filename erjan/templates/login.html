@@ -3,6 +3,24 @@
 {% block content %}
 
 <link rel="stylesheet" href="{% static 'assets/css/login.css' %}">
+<style>
+  body, h2, .form-group, .form-links, button, input, label {
+    font-family: 'Montserrat', sans-serif !important;
+  }
+  button[type="submit"] {
+    background: linear-gradient(45deg, #2691ff, #0172ff);
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.6rem 1.5rem;
+    transition: background 0.3s ease, transform 0.2s;
+  }
+  button[type="submit"]:hover {
+    background: linear-gradient(45deg, #0172ff, #2691ff);
+    transform: translateY(-2px);
+  }
+</style>
 
 <div class="login-container">
     <h2>Login</h2>

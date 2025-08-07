@@ -34,7 +34,7 @@
 
                         <div class="mb-3">
                             <label for="id_about_user" class="form-label">About Me</label>
-                            {{ form.about_user }}
+                            <textarea name="about_user" class="form-control" id="id_about_user" rows="4" placeholder="Tell us about yourself...">{{ user.about_user|default:"" }}</textarea>
                             <div class="form-text">Share something interesting about yourself!</div>
                         </div>
 

@@ -8,6 +8,8 @@ from .services import *
 from django.conf import settings
 from .forms import EditProfileForm, RegisterForm, LoginForm
 
+
+
 def user_register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -119,3 +121,4 @@ def edit_profile(request):
         form = EditProfileForm(instance=request.user)
 
     return render(request, 'edit_profile.html', {'form': form})
+

@@ -60,6 +60,7 @@ class Color(models.Model):
 
 
 class Product(models.Model):
+    user = models.ForeignKey(user_model, on_delete=models.CASCADE, related_name='products', blank=True, null=True)
     name = models.CharField(max_length=200)
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', default=1)
@@ -72,7 +73,9 @@ class Product(models.Model):
     stock_quantity = models.PositiveIntegerField(default=0)
     gender = models.CharField(max_length=1, choices=GenderChoices, default='U')
     available_sizes = models.ManyToManyField(Size)
-    color = models.ManyToManyField(Color)
+
+    available_colors = models.ManyToManyField(Color, related_name='products_available_in')
+    color = models.ManyToManyField(Color, related_name='products_with_color')
 
     # Images
     main_image = models.ImageField(upload_to='media/products/')
@@ -107,12 +110,8 @@ class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
     user = models.ForeignKey(user_model, on_delete=models.CASCADE)
     rating = models.IntegerField(choices=RATING_CHOICES)
-    title = models.CharField(max_length=200)
-    comment = models.TextField()
-    is_verified_purchase = models.BooleanField(default=False)
-    is_approved = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    comment = models.TextField(blank=True)
 
     class Meta:
         unique_together = ('product', 'user')
@@ -133,9 +132,14 @@ class Order(models.Model):
     def __str__(self):
         return f"Order #{self.id} by {self.user.username}"
 
+    @property
+    def subtotal(self):
+        return self.quantity * self.product.price
+
 class Cart(models.Model):
     user = models.ForeignKey(user_model, on_delete=models.CASCADE)
-    orders = models.ManyToManyField(Order, related_name='carts', blank=True)  # Changed to ManyToMany
+    orders = models.ManyToManyField(Order, related_name='carts', blank=True)
+    total = models.FloatField(default=0)
 
     def __str__(self):
         return f"Cart for {self.user.username}"

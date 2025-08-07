@@ -1,0 +1,238 @@
+{% extends 'mainPages/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5" style="font-family: 'Montserrat', sans-serif;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white" style="background: linear-gradient(45deg, #2691ff, #0172ff);">
+                    <h3 class="mb-0">Top Up Your Account</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="top-up-form">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label for="amount" class="form-label">Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="amount" name="amount" min="5" step="1" required>
+                            </div>
+                            <div class="form-text">Minimum amount: $5</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Select Payment Method</label>
+                            <div class="payment-methods">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <input type="radio" class="btn-check" name="payment_method" id="visa" value="visa" autocomplete="off" required>
+                                        <label class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3" for="visa">
+                                            <i class="bx bxl-visa fs-1"></i>
+                                            <span>Visa</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="radio" class="btn-check" name="payment_method" id="mastercard" value="mastercard" autocomplete="off">
+                                        <label class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3" for="mastercard">
+                                            <i class="bx bxl-mastercard fs-1"></i>
+                                            <span>Mastercard</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="payment-details" class="mb-4 d-none">
+                            <!-- Dynamic payment form fields will appear here -->
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary" style="background: linear-gradient(45deg, #2691ff, #0172ff); border: none;">Continue to Payment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #f0f4ff, #e0e7ff);
+        font-family: 'Montserrat', sans-serif !important;
+    }
+
+    .card {
+        border-radius: 16px;
+        overflow: hidden;
+        border: none;
+    }
+
+    .card-header {
+        background: linear-gradient(45deg, #2691ff, #0172ff) !important;
+        color: #fff;
+        padding: 1.25rem 1.5rem;
+        border-bottom: none;
+    }
+
+    .card-header h3 {
+        font-weight: 600;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #343a40;
+    }
+
+    .form-text {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .input-group-text {
+        font-weight: 500;
+        background-color: #e2e6ea;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        border-color: #4e73df;
+    }
+
+    .payment-methods .btn {
+        border-width: 2px;
+        transition: all 0.3s ease;
+        background-color: #ffffff;
+        color: #4e73df;
+        border-color: #4e73df;
+    }
+
+    .payment-methods .btn:hover {
+        background-color: #4e73df;
+        color: #ffffff;
+        transform: scale(1.03);
+    }
+
+    .payment-methods .btn-check:checked + .btn {
+        background: linear-gradient(45deg, #2691ff, #0172ff) !important;
+        color: #ffffff !important;
+        border: none !important;
+        transform: scale(1.03);
+        box-shadow: 0 5px 15px rgba(78, 115, 223, 0.3);
+    }
+
+    #payment-details .card {
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+        background-color: #ffffff;
+    }
+
+    /* Enhanced submit button */
+    .btn-primary {
+        background: linear-gradient(45deg, #2691ff, #0172ff) !important;
+        border: none;
+        font-weight: 600;
+        transition: background 0.3s ease, transform 0.2s;
+        padding: 0.6rem 1.5rem;
+        font-size: 1.1rem;
+        border-radius: 8px;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(45deg, #0172ff, #2691ff) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(28, 200, 138, 0.2);
+    }
+
+    .btn-primary:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(28, 200, 138, 0.4);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+        const paymentDetails = document.getElementById('payment-details');
+
+        paymentMethods.forEach(method => {
+            method.addEventListener('change', function () {
+                paymentDetails.classList.remove('d-none');
+
+                if (this.value === 'visa' || this.value === 'mastercard') {
+                    paymentDetails.innerHTML = `
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="card_number" class="form-label">Card Number</label>
+                                <input type="text" class="form-control" id="card_number" name="card_number" maxlength="16" required placeholder="Enter 16-digit card number">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="expiry" class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" id="expiry" name="expiry" placeholder="MM/YY" maxlength="5" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" name="cvv" maxlength="4" required placeholder="3–4 digits">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cardholder" class="form-label">Cardholder Name</label>
+                                <input type="text" class="form-control" id="cardholder" name="cardholder" required placeholder="UPPERCASE only">
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                    setTimeout(() => {
+                        const cardNumber = document.getElementById('card_number');
+                        const expiry = document.getElementById('expiry');
+                        const cvv = document.getElementById('cvv');
+                        const cardholder = document.getElementById('cardholder');
+                        const amount = document.getElementById('amount');
+
+                        cardNumber.addEventListener('input', e => {
+                            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 16);
+                        });
+
+                        cvv.addEventListener('input', e => {
+                            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                        });
+
+                        expiry.addEventListener('input', e => {
+                            let value = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
+                            if (value.length >= 3) {
+                                value = value.slice(0, 2) + '/' + value.slice(2);
+                            }
+                            e.target.value = value;
+                        });
+
+                        expiry.addEventListener('blur', e => {
+                            const val = e.target.value;
+                            const match = val.match(/^(0[1-9]|1[0-2])\/\d{2}$/);
+                            if (!match) {
+                                alert('Invalid expiry format. Use MM/YY');
+                                e.target.focus();
+                            }
+                        });
+
+                        cardholder.addEventListener('input', e => {
+                            e.target.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, '');
+                        });
+
+                        amount.addEventListener('input', e => {
+                            const value = e.target.value.replace(/\D/g, '');
+                            e.target.value = value.slice(0, 12);
+                        });
+                    }, 50);
+                }
+            });
+        });
+    });
+</script>
+
+
+{% endblock %}

@@ -1,82 +1,154 @@
 {% extends 'mainPages/base.html' %}
-{% laod static %}
+{% load static %}
 
 {% block content %}
-<div class="row">
-  {% if products %}
-  {% for product in products %}
-  <div class="col-12 col-md-4 mb-4">
-    <div class="card h-100 shadow-sm">
-      <a href="{% url 'detail_view' product.id %}" class="text-decoration-none">
-        <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
-      </a>
-      <div class="card-body d-flex flex-column">
-        <div class="mb-2">
-          <small class="text-muted">{{ product.brand.name }} • {{ product.category.name }}</small>
+<div class="container py-5" style="font-family: 'Montserrat', sans-serif;">
+  <h2 class="mb-4 text-center">Your Shopping Cart</h2>
+
+  {% if cart.orders.all %}
+  <div class="row">
+    {% for order in cart.orders.all %}
+    <div class="col-12 col-lg-4 col-md-6 mb-4">
+      <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden hover-shadow" style="font-family: 'Montserrat', sans-serif;">
+        <div class="position-relative">
+          <a href="{% url 'detail_view' order.product.id %}">
+            <img src="{{ order.product.main_image.url }}" class="card-img-top" alt="{{ order.product.name }}"
+                 style="height: 260px; object-fit: cover; transition: transform 0.3s;">
+          </a>
+          <div class="position-absolute top-0 end-0 p-2">
+            <a href="{% url 'cart_remove_product' order.id %}" class="text-decoration-none">
+              <button class="btn btn-sm btn-outline-danger rounded-circle" title="Remove from cart">
+                <i class="fa fa-trash"></i>
+              </button>
+            </a>
+          </div>
         </div>
 
-        <h5 class="card-title">
-          <a href="#" class="text-decoration-none text-dark">{{ product.name }}</a>
-        </h5>
+        <div class="card-body d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-light text-dark">{{ order.product.brand.name }}</span>
+            <span class="badge bg-light text-dark">{{ order.product.category.name }}</span>
+          </div>
 
-        <p class="card-text text-muted mb-3">
-          {{ product.description|truncatechars:80 }}
-        </p>
+          <h5 class="card-title">
+            <a href="{% url 'detail_view' order.product.id %}" class="text-decoration-none text-dark font-weight-bold" >{{ order.product.name }}</a>
+          </h5>
 
-        <div class="mt-auto">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-              <span class="h5 text-success mb-0">${{ product.price }}</span>
-              {% if product.gender %}
-              <small class="text-muted ms-2">{{ product.get_gender_display }}</small>
-              {% endif %}
+          <p class="card-text text-muted small mb-3">
+            {{ order.product.description|truncatechars:70 }}
+          </p>
+
+          <div class="mt-auto">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <span class="h5 fw-bold" style="background: linear-gradient(45deg, #2691ff, #0172ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${{ order.product.price }}</span>
+                {% if order.product.gender %}
+                <small class="text-muted ms-2">{{ order.product.get_gender_display }}</small>
+                {% endif %}
+              </div>
+              <div>
+                <div class="stars">
+                  <i class="text-warning fa fa-star"></i>
+                  <i class="text-warning fa fa-star"></i>
+                  <i class="text-warning fa fa-star"></i>
+                  <i class="text-warning fa fa-star"></i>
+                  <i class="text-muted fa fa-star"></i>
+                </div>
+              </div>
             </div>
-            <div>
-              <i class="text-warning fa fa-star"></i>
-              <i class="text-warning fa fa-star"></i>
-              <i class="text-warning fa fa-star"></i>
-              <i class="text-warning fa fa-star"></i>
-              <i class="text-muted fa fa-star"></i>
-              <small class="text-muted">({{ product.reviews.count }})</small>
+
+            <div class="border-top pt-3">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Size:</span>
+                <span class="fw-bold">{{ order.size.code }}</span>
+              </div>
+
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Color:</span>
+                <div>
+                  <span class="fw-bold">{{ order.color.color }}</span>
+                  <span class="color-dot ms-1" style="background-color: {{ order.color.color_code }}; display: inline-block; width: 12px; height: 12px; border-radius: 50%;"></span>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between mb-3">
+                <span class="text-muted">Quantity:</span>
+                <div class="d-flex align-items-center">
+                  <button class="btn btn-sm btn-outline-secondary me-2">-</button>
+                  <span class="fw-bold mx-2">{{ order.quantity }}</span>
+                  <button class="btn btn-sm btn-outline-secondary ms-2">+</button>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Subtotal:</span>
+                <span class="fw-bold" style="background: linear-gradient(45deg, #2691ff, #0172ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${{ order.subtotal }}</span>
+              </div>
+
             </div>
           </div>
-
-          <div class="mb-2">
-            <small class="text-muted">Sizes: </small>
-            {% for size in product.available_sizes.all|slice:":3" %}
-            <span class="badge bg-light text-dark border me-1">{{ size.code }}</span>
-            {% endfor %}
-            {% if product.available_sizes.count > 3 %}
-            <small class="text-muted">+{{ product.available_sizes.count|add:"-3" }} more</small>
-            {% endif %}
-          </div>
-
-          <div class="mb-3">
-            <small class="text-muted">Colors: </small>
-            {% for color in product.color.all|slice:":4" %}
-            <span class="badge bg-secondary me-1">{{ color.color }}</span>
-            {% endfor %}
-          </div>
-
-          {% if product.stock_quantity <= 5 and product.stock_quantity > 0 %}
-          <small class="text-warning mt-2 d-block">
-            <i class="fas fa-exclamation-triangle"></i> Only {{ product.stock_quantity }} left in stock!
-          </small>
-          {% elif product.stock_quantity == 0 %}
-          <small class="text-danger mt-2 d-block">
-            <i class="fas fa-times-circle"></i> Out of stock
-          </small>
-          {% endif %}
         </div>
       </div>
     </div>
+    {% endfor %}
+
   </div>
-  {% endfor %}
+
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between">
+        <a href="{% url 'index_view' %}" class="btn btn-outline-secondary" style="border-radius: 8px;">
+          <i class="fa fa-arrow-left me-2"></i>Continue Shopping
+        </a>
+        <a href="{% url 'checkout' %}" class="btn btn-primary" style="background: linear-gradient(45deg, #2691ff, #0172ff); border: none;">
+          Proceed to Checkout(${{ total_price }})<i class="fa fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
   {% else %}
   <div class="col-12 text-center py-5">
-    <h4 class="text-muted">No products available</h4>
-    <p class="text-muted">Check back later for new arrivals!</p>
+    <div class="empty-cart">
+      <i class="fa fa-shopping-cart fa-4x text-muted mb-3"></i>
+      <h4 class="text-muted">Your cart is empty</h4>
+      <p class="text-muted mb-4">Looks like you haven't added anything to your cart yet</p>
+      <a href="{% url 'index_view' %}" class="btn btn-primary" style="background: linear-gradient(45deg, #2691ff, #0172ff); border: none;">Start Shopping</a>
+    </div>
   </div>
   {% endif %}
 </div>
+
+<style>
+  .hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    transition: all 0.3s ease;
+  }
+
+  .hover-shadow:hover img {
+    transform: scale(1.03);
+  }
+
+  .card-title {
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .card {
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .empty-cart {
+    padding: 40px 0;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .cart-price-number {
+    background: linear-gradient(45deg, #2691ff, #0172ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+  }
+</style>
 {% endblock %}

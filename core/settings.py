@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'product',
     'erjan',
+    'django_filters'
+
 
 
 

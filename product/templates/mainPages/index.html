@@ -1,8 +1,15 @@
-{% extends 'mainPages/base.html' %} %}
+{% extends 'mainPages/base.html' %}
 {% load static %}
 
 
 {% block content %}
+
+<!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <!-- Modal -->
     <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -20,9 +27,6 @@
         </div>
     </div>
 
-
-
-    <!-- Start Banner Hero -->
     <div id="template-mo-zay-hero-carousel" class="carousel slide" data-bs-ride="carousel">
         <ol class="carousel-indicators">
             <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="0" class="active"></li>
@@ -30,66 +34,27 @@
             <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="2"></li>
         </ol>
         <div class="carousel-inner">
-            <div class="carousel-item active">
+            {% for brand in top_brands %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
                 <div class="container">
                     <div class="row p-5">
                         <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
-                            <img class="img-fluid" src="{% static 'assets/img/banner_img_01.jpg' %}" alt="">
+                            <div class="brand-logo-container">
+                                <img class="brand-logo" src="{{ brand.logo.url }}" alt="{{ brand.name }}">
+                            </div>
                         </div>
                         <div class="col-lg-6 mb-0 d-flex align-items-center">
-                            <div class="text-align-left align-self-center">
-                                <h1 class="h1 text-success"><b>Zay</b> eCommerce</h1>
-                                <h3 class="h2">Tiny and Perfect eCommerce Template</h3>
-                                <p>
-                                    Zay Shop is an eCommerce HTML5 CSS template with latest version of Bootstrap 5 (beta 1). 
-                                    This template is 100% free provided by <a rel="sponsored" class="text-success" href="https://templatemo.com" target="_blank">TemplateMo</a> website. 
-                                    Image credits go to <a rel="sponsored" class="text-success" href="https://stories.freepik.com/" target="_blank">Freepik Stories</a>,
-                                    <a rel="sponsored" class="text-success" href="https://unsplash.com/" target="_blank">Unsplash</a> and
-                                    <a rel="sponsored" class="text-success" href="https://icons8.com/" target="_blank">Icons 8</a>.
+                            <div class="brand-info">
+                                <h1 class="h1 text-success brand-name">{{ brand.name }}</h1>
+                                <p class="brand-description">
+                                    {{ brand.description }}
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="carousel-item">
-                <div class="container">
-                    <div class="row p-5">
-                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
-                            <img class="img-fluid" src="{% static 'assets/img/banner_img_02.jpg' %}" alt="">
-                        </div>
-                        <div class="col-lg-6 mb-0 d-flex align-items-center">
-                            <div class="text-align-left">
-                                <h1 class="h1">Proident occaecat</h1>
-                                <h3 class="h2">Aliquip ex ea commodo consequat</h3>
-                                <p>
-                                    You are permitted to use this Zay CSS template for your commercial websites. 
-                                    You are <strong>not permitted</strong> to re-distribute the template ZIP file in any kind of template collection websites.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="container">
-                    <div class="row p-5">
-                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
-                            <img class="img-fluid" src="{% static 'assets/img/banner_img_03.jpg' %}" alt="">
-                        </div>
-                        <div class="col-lg-6 mb-0 d-flex align-items-center">
-                            <div class="text-align-left">
-                                <h1 class="h1">Repr in voluptate</h1>
-                                <h3 class="h2">Ullamco laboris nisi ut </h3>
-                                <p>
-                                    We bring you 100% free CSS templates for your websites. 
-                                    If you wish to support TemplateMo, please make a small contribution via PayPal or tell your friends about our website. Thank you.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
         <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="prev">
             <i class="fas fa-chevron-left"></i>
@@ -98,7 +63,7 @@
             <i class="fas fa-chevron-right"></i>
         </a>
     </div>
-    <!-- End Banner Hero -->
+
 
 
     <!-- Start Categories of The Month -->
@@ -106,31 +71,27 @@
         <div class="row text-center pt-3">
             <div class="col-lg-6 m-auto">
                 <h1 class="h1">Categories of The Month</h1>
-                <p>
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                    deserunt mollit anim id est laborum.
+                <p style="font-family: 'Montserrat', sans-serif;">
+                    The categories with the most products:
                 </p>
             </div>
         </div>
+
         <div class="row">
+            {% for category in top_categories %}
             <div class="col-12 col-md-4 p-5 mt-3">
-                <a href="#"><img src="{% static 'assets/img/category_img_01.jpg' %}" class="rounded-circle img-fluid border"></a>
-                <h5 class="text-center mt-3 mb-3">Watches</h5>
-                <p class="text-center"><a class="btn btn-success">Go Shop</a></p>
+                <a href="#" class="category-image-container">
+                    <img src="{{ category.image.url }}" class="rounded-circle img-fluid border category-image">
+                </a>
+                <h5 class="text-center mt-3 mb-3">{{category.name}}</h5>
+                <p class="text-center">
+                    <a class="btn btn-success" href="{% url 'filtered_products' %}?category={{ category.id }}">Go Shop</a>
+                </p>
             </div>
-            <div class="col-12 col-md-4 p-5 mt-3">
-                <a href="#"><img src="{% static 'assets/img/category_img_02.jpg' %}" class="rounded-circle img-fluid border"></a>
-                <h2 class="h5 text-center mt-3 mb-3">Shoes</h2>
-                <p class="text-center"><a class="btn btn-success">Go Shop</a></p>
-            </div>
-            <div class="col-12 col-md-4 p-5 mt-3">
-                <a href="#"><img src="{% static 'assets/img/category_img_03.jpg' %}" class="rounded-circle img-fluid border"></a>
-                <h2 class="h5 text-center mt-3 mb-3">Accessories</h2>
-                <p class="text-center"><a class="btn btn-success">Go Shop</a></p>
-            </div>
+            {% endfor %}
         </div>
+
     </section>
-    <!-- End Categories of The Month -->
 
 
     <!-- Start Featured Product -->
@@ -138,87 +99,77 @@
         <div class="container py-5">
             <div class="row text-center py-3">
                 <div class="col-lg-6 m-auto">
-                    <h1 class="h1">Featured Product</h1>
-                    <p>
-                        Reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                        Excepteur sint occaecat cupidatat non proident.
-                    </p>
+                    <h1 class="h1" style="font-family: 'Montserrat', sans-serif;">Featured Products</h1>
                 </div>
             </div>
-            <div class="row">
+            <!-- Products Display -->
+            <div class="row justify-content-center">
                 {% if products %}
                 {% for product in products %}
-                <div class="col-12 col-md-4 mb-4">
-                   <div class="card h-100 shadow-sm">
-                        <a href="{% url 'detail_view' product.id %}" class="text-decoration-none">
-                            <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card product-card h-100 shadow-sm">
+                        <a href="{% url 'detail_view' product.id %}">
+                            <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="product-img w-100">
                         </a>
                         <div class="card-body d-flex flex-column">
-                            <div class="mb-2">
-                                <small class="text-muted">{{ product.brand.name }} • {{ product.category.name }}</small>
+                            <div class="mb-1 brand-category">
+                                {{ product.brand.name }} • {{ product.category.name }}
                             </div>
-
-                            <h5 class="card-title">
-                                <a href="#" class="text-decoration-none text-dark">{{ product.name }}</a>
-                            </h5>
-
-                            <p class="card-text text-muted mb-3">
-                                {{ product.description|truncatechars:80 }}
-                            </p>
+                            <div class="product-title mb-1">{{ product.name }}</div>
+                            <p class="product-description" style="font-size: 14px !important;">{{ product.description|truncatechars:80 }}</p>
 
                             <div class="mt-auto">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div>
-                                        <span class="h5 text-success mb-0">${{ product.price }}</span>
-                                        {% if product.gender %}
-                                        <small class="text-muted ms-2">{{ product.get_gender_display }}</small>
-                                        {% endif %}
-                                    </div>
-                                    <div>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-warning fa fa-star"></i>
-                                        <i class="text-muted fa fa-star"></i>
-                                        <small class="text-muted">({{ product.reviews.count }})</small>
-                                    </div>
-                                </div>
-
-                                <div class="mb-2">
-                                    <small class="text-muted">Sizes: </small>
-                                    {% for size in product.available_sizes.all|slice:":3" %}
-                                        <span class="badge bg-light text-dark border me-1">{{ size.code }}</span>
-                                    {% endfor %}
-                                    {% if product.available_sizes.count > 3 %}
-                                        <small class="text-muted">+{{ product.available_sizes.count|add:"-3" }} more</small>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="product-price">${{ product.price }}</span>
+                                    {% if product.gender %}
+                                    <span class="gender-text">{{ product.get_gender_display }}</span>
                                     {% endif %}
                                 </div>
 
-                                <div class="mb-3">
-                                    <small class="text-muted">Colors: </small>
+                                <div class="product-rating mb-3">
+                                    {% if product.average_rating > 0 %}
+                                    <div class="star-display" title="{{ product.average_rating }} out of 5">
+                                        {% for i in "12345" %}
+                                        {% if forloop.counter <= product.average_rating %}
+                                        <span class="star filled">★</span>
+                                        {% elif forloop.counter <= product.average_rating|add:0.5 and forloop.counter > product.average_rating %}
+                                        <span class="star half-filled">★</span>
+                                        {% else %}
+                                        <span class="star">★</span>
+                                        {% endif %}
+                                        {% endfor %}
+                                        <span class="rating-text">({{ product.average_rating }})</span>
+                                        <span class="rating-text">({{ product.reviews.count }})</span>
+
+                                    </div>
+                                    {% else %}
+                                    <div class="star-display" title="No ratings yet">
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="rating-text">(No ratings)</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-2">
+                                    <small class="text-muted fw-bold">Sizes:</small>
+                                    {% for size in product.available_sizes.all|slice:":3" %}
+                                    <span class="size-badge">{{ size.code }}</span>
+                                    {% endfor %}
+                                    {% if product.available_sizes.count > 3 %}
+                                    <small class="text-muted">+{{ product.available_sizes.count|add:"-3" }} more</small>
+                                    {% endif %}
+                                </div>
+
+                                <div>
+                                    <small class="text-muted fw-bold">Colors:</small>
                                     {% for color in product.color.all|slice:":4" %}
-                                        <span class="badge bg-secondary me-1">{{ color.color }}</span>
+                                    <span class="color-dot" style="background-color: {{ color.hex_code }}" title="{{ color.color }}"></span>
                                     {% endfor %}
                                 </div>
-
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-success flex-fill">
-                                        <i class="fas fa-shopping-cart me-1"></i>Add to Cart
-                                    </button>
-                                    <button class="btn btn-outline-danger">
-                                        <i class="fas fa-heart"></i>
-                                    </button>
-                                </div>
-
-                                {% if product.stock_quantity <= 5 and product.stock_quantity > 0 %}
-                                <small class="text-warning mt-2 d-block">
-                                    <i class="fas fa-exclamation-triangle"></i> Only {{ product.stock_quantity }} left in stock!
-                                </small>
-                                {% elif product.stock_quantity == 0 %}
-                                <small class="text-danger mt-2 d-block">
-                                    <i class="fas fa-times-circle"></i> Out of stock
-                                </small>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -226,12 +177,281 @@
                 {% endfor %}
                 {% else %}
                 <div class="col-12 text-center py-5">
-                    <h4 class="text-muted">No products available</h4>
-                    <p class="text-muted">Check back later for new arrivals!</p>
+                    <h4 class="text-muted">No products yet.</h4>
                 </div>
                 {% endif %}
             </div>
+            <!-- Pagination Bar -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Product pagination" class="d-flex justify-content-center mt-4">
+                <ul class="pagination pagination-lg">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link pagination-gradient" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link pagination-gradient" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </span>
+                    </li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link pagination-gradient">{{ num }}</span>
+                        </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link pagination-gradient" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link pagination-gradient" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link pagination-gradient" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
         </div>
     </section>
+
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Poppins:wght@300;400&display=swap');
+
+    body, h1, h2, h3, h4, h5, h6, p, a, .product-title, .brand-category, .product-description, .product-price, .gender-text, .size-badge, .rating-text, .brand-name, .brand-description, .category-image-container, .category-image, .star-display, .star, .product-card, .product-img {
+        font-family: 'Montserrat', sans-serif !important;
+    }
+
+    /* Brand carousel styling - updated with cooler fonts and colors */
+    .carousel-item {
+        height: 500px; /* Fixed height for all carousel items */
+    }
+
+    .brand-logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 350px;
+        overflow: hidden;
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .brand-logo {
+        max-width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+    }
+
+    .brand-info {
+        padding: 20px;
+    }
+
+    .brand-name {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.8rem;
+        margin-bottom: 20px;
+        font-weight: 700;
+        background: linear-gradient(45deg, #2691ff, #0172ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .brand-description {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: #444;
+    }
+
+    @media (max-width: 992px) {
+        .carousel-item {
+            height: auto;
+            padding: 40px 0;
+        }
+
+        .brand-logo-container {
+            height: 250px;
+            margin-bottom: 30px;
+        }
+
+        .brand-info {
+            text-align: center;
+        }
+    }
+
+    .category-image-container {
+        display: block;
+        width: 250px;
+        height: 250px;
+        margin: 0 auto;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .category-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    /* Star rating styling */
+    .star-display {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .star {
+        font-size: 18px;
+        color: #ddd;
+        margin-right: 2px;
+    }
+
+    .star.filled {
+        color: #ffd700;
+    }
+
+    .star.half-filled {
+        position: relative;
+    }
+
+    .star.half-filled::before {
+        content: "★";
+        position: absolute;
+        color: #ffd700;
+        width: 50%;
+        overflow: hidden;
+    }
+
+    .rating-text {
+        font-size: 14px;
+        color: #666;
+        margin-left: 5px;
+    }
+
+    .product-card {
+        border: none;
+        border-radius: 1rem;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        padding: 1rem;
+    }
+
+    .product-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-img {
+        height: 300px; /* Increased from 250px */
+        object-fit: cover;
+        border-bottom: 1px solid #eee;
+        border-radius: 0.75rem;
+    }
+
+    .color-dot {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 1px solid #ccc;
+        margin-right: 6px;
+        vertical-align: middle;
+    }
+
+    .product-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .brand-category {
+        font-size: 0.9rem;
+        color: #888;
+    }
+
+    .product-description {
+        font-size: 1rem;
+        color: #666;
+    }
+
+    .product-price {
+        font-size: 1.3rem;
+        font-weight: bold;
+        background: linear-gradient(45deg, #2691ff, #0172ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .gender-text {
+        font-weight: bold;
+        color: #555;
+        font-size: 1rem;
+    }
+
+    .size-badge {
+        background-color: #c0c0c0;
+        border: 1px solid #ccc;
+        font-size: 0.9rem;
+        margin-right: 6px;
+        border-radius: 6px;
+        padding: 3px 7px;
+    }
+
+    .rating i {
+        font-size: 1rem;
+    }
+
+    .btn-success, .bg-success, .input-group-text.bg-success {
+        background: linear-gradient(45deg, #2691ff, #0172ff) !important;
+        border: none !important;
+        color: #fff !important;
+    }
+
+    .pagination-gradient {
+        background: linear-gradient(45deg, #2691ff, #0172ff);
+        color: #fff !important;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background 0.3s, color 0.3s;
+    }
+    .pagination .page-item.active .page-link.pagination-gradient {
+        background: linear-gradient(45deg, #0172ff, #2691ff);
+        color: #fff !important;
+        border: none;
+        box-shadow: 0 2px 8px rgba(38,145,255,0.12);
+    }
+    .pagination .page-link.pagination-gradient:hover {
+        background: linear-gradient(45deg, #0172ff, #2691ff);
+        color: #fff !important;
+        box-shadow: 0 2px 8px rgba(38,145,255,0.18);
+    }
+    .pagination .page-item.disabled .page-link.pagination-gradient {
+        background: #e9ecef;
+        color: #aaa !important;
+        border: none;
+    }
+    </style>
 
 {% endblock %}

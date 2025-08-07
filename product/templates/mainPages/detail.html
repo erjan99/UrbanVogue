@@ -7,6 +7,226 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>{{ product.name }} - Product Detail</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+  <style>
+    body, h1, h2, h3, h4, h5, h6, p, a, .product-title, .brand, .category, .price, .description, .color-name, .size-btn, .add-to-cart-btn, .star, .rating-text, .comment-card, .worksingle-comment-heading, .worksingle-comment-footer, .form-group, .form-label, .form-control {
+      font-family: 'Montserrat', sans-serif !important;
+    }
+    .price {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: black;
+    }
+    .price-number {
+      background: linear-gradient(45deg, #2691ff, #0172ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: bold;
+      display: inline-block;
+    }
+    .size-btn.active {
+      background: linear-gradient(45deg, #2691ff, #0172ff);
+      color: white;
+      border-color: #2691ff;
+    }
+    .add-to-cart-btn {
+      background: linear-gradient(45deg, #2691ff, #0172ff);
+      color: white;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .add-to-cart-btn:hover {
+      background: linear-gradient(45deg, #0172ff, #2691ff);
+    }
+
+    /* ========== COMMENTS SECTION ========== */
+
+    .worksingle-comment-heading h4 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .card.comment-card {
+      transition: box-shadow 0.3s ease-in-out;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .card.comment-card:hover {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body .rounded-circle {
+      object-fit: cover;
+    }
+
+    .card-body h6 {
+      font-weight: 600;
+    }
+
+    .card-body small {
+      font-size: 0.85rem;
+    }
+
+    .card-body .bg-light {
+      background-color: #f9f9f9 !important;
+      font-size: 1rem;
+      line-height: 1.5;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .btn-close {
+      opacity: 0.6;
+      transition: 0.2s;
+    }
+
+    .btn-close:hover {
+      opacity: 1;
+    }
+
+    /* ========== STAR RATING ========== */
+    .rating-selector {
+      display: flex;
+      justify-content: start;
+      gap: 5px;
+    }
+
+    .star-rating {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+    }
+
+    .star-rating input[type="radio"] {
+      display: none;
+    }
+
+    .star-rating label {
+      font-size: 1.6rem;
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .star-rating input[type="radio"]:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+      color: #ffc107;
+    }
+
+    /* ========== COMMENT FORM ========== */
+    .worksingle-comment-footer h4 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .form-group textarea {
+      resize: none;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .form-group textarea:focus {
+      border-color: #999;
+      outline: none;
+    }
+
+    .btn.radius-0 {
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 1rem;
+      background-color: #495057;
+      transition: 0.3s ease;
+    }
+
+    .btn.radius-0:hover {
+      background-color: #343a40;
+    }
+
+
+    .star-display {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .star {
+      font-size: 20px;
+      color: #ddd;
+      margin-right: 3px;
+    }
+
+    .star.filled {
+      color: #ffd700;
+    }
+
+    .star.half-filled {
+      position: relative;
+    }
+
+    .star.half-filled::before {
+      content: "★";
+      position: absolute;
+      color: #ffd700;
+      width: 50%;
+      overflow: hidden;
+    }
+
+    .rating-text {
+      font-size: 14px;
+      color: #666;
+      margin-left: 5px;
+    }
+    /* Star rating styling */
+    .rating-selector {
+      margin-bottom: 15px;
+    }
+
+    .star-rating {
+      display: inline-flex;
+      flex-direction: row-reverse;
+      font-size: 0;
+      direction: ltr; /* This was missing */
+    }
+
+    .star-input {
+      display: none;
+    }
+
+    .star-label {
+      font-size: 60px; /* Increased from 30px */
+      color: #ddd;
+      cursor: pointer;
+      margin: 0;
+      padding: 0 4px; /* Increased padding for more space between stars */
+      transition: color 0.2s;
+    }
+
+    /* When hovering over a star, highlight it and all stars before it */
+    .star-label:hover,
+    .star-label:hover ~ .star-label,
+    .star-input:checked ~ .star-label {
+      color: #ffd700;  /* Bright yellow */
+    }
+
+    /* Fix the right-to-left order problem */
+    .star-rating > .star-label:hover,
+    .star-rating > .star-label:hover ~ .star-label,
+    .star-rating > .star-input:checked ~ .star-label {
+      direction: ltr;
+    }
+  </style>
 </head>
 <body>
 <div class="container">
@@ -17,30 +237,53 @@
 
     <div class="info-section">
       <h1>{{ product.name }}</h1>
-      <p class="brand">Brand: {{ product.brand.name }}</p>
-      <p class="category">Category: {{ product.category.name }}</p>
-      <p class="price">${{ product.price }} </p>
+      <p class="brand"><span style="font-weight: bold">Band:</span>: {{ product.brand.name }}</p>
+      <p class="category"><span style="font-weight: bold">Category:</span>: {{ product.category.name }}</p>
+      <p class="price"><span style="font-weight: bold;color: black">Price :</span><span class="price-number">${{ product.price }}</span></p>
       <p class="description">{{ product.description }}</p>
 
-      <p class="stock {% if product.stock_quantity == 0 %}out-of-stock{% endif %}">
-        {% if product.stock_quantity > 0 %}
-        In stock: {{ product.stock_quantity }}
+
+      <div class="product-rating mb-3">
+        {% if product.average_rating > 0 %}
+        <div class="star-display" title="{{ product.average_rating }} out of 5">
+          {% for i in "12345" %}
+          {% if forloop.counter <= product.average_rating %}
+          <span class="star filled">★</span>
+          {% elif forloop.counter <= product.average_rating|add:0.5 and forloop.counter > product.average_rating %}
+          <span class="star half-filled">★</span>
+          {% else %}
+          <span class="star">★</span>
+          {% endif %}
+          {% endfor %}
+          <span class="rating-text">({{ product.average_rating }})</span>
+          <span class="rating-text">({{ product.reviews.count }})</span>
+
+        </div>
         {% else %}
-        Out of stock
+        <div class="star-display" title="No ratings yet">
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="rating-text">(No ratings)</span>
+        </div>
         {% endif %}
-      </p>
+      </div>
+
+
 
       <div class="gender">
-        Gender:
+        <span style="font-weight: bold">Gender:</span>
         {% if product.gender == 'M' %} Male
         {% elif product.gender == 'F' %} Female
-        {% elif product.gender == 'U' %} Unisex%}
+        {% elif product.gender == 'U' %} Unisex
         {% else %} Kids
         {% endif %}
       </div>
 
       <div class="colors">
-        <span>Colors:</span>
+        <span style="font-weight: bold">Colors:</span>
         <div class="color-list">
           {% for color in product.color.all %}
           <div class="color-item" data-color-id="{{ color.id }}" style="cursor: pointer;">
@@ -52,7 +295,7 @@
       </div>
 
       <div class="sizes">
-        Sizes:
+        <span style="font-weight: bold">Sizes:</span>:
         <div class="size-options">
           {% for size in product.available_sizes.all %}
           <button class="size-btn" data-size-id="{{ size.id }}" type="button">{{ size.code }}</button>
@@ -66,11 +309,119 @@
         <input type="hidden" name="color_id" id="selected-color" value="">
         <input type="hidden" name="size_id" id="selected-size" value="">
         <input type="hidden" name="quantity" value="1">
-        <button type="submit" class="add-to-cart-btn">Добавить в корзину</button>
+        <button type="submit" class="add-to-cart-btn">Add to cart</button>
       </form>
     </div>
   </div>
+</div><br><br>
+
+<div class="row justify-content-center">
+  <div class="worksingle-comment-heading col-8 m-auto pb-3">
+    <h4 class="h5">Comments</h4>
+  </div>
 </div>
+{% if reviews %}
+{% for feedback in reviews %}
+<div class="row pb-4" id="feedback-{{ feedback.id }}">
+  <div class="col-md-8 mx-auto">
+    <div class="card comment-card shadow-sm border-0 position-relative">
+      {% if feedback.user == request.user %}
+      <form method="post" action="{% url 'delete_review' feedback.id %}" class="position-absolute top-0 end-0 m-2">
+        {% csrf_token %}
+        <a href="{% url 'delete_review' feedback.id %}"><button type="submit" class="btn-close" aria-label="Close"></button></a>
+      </form>
+      {% endif %}
+
+      <!-- COMMENT BODY -->
+      <div class="card-body d-flex align-items-start">
+        <!-- Avatar -->
+        <div class="me-3">
+          {% if request.user.avatar %}
+          <img src="{{ request.user.avatar.url }}" class="rounded-circle border" style="width: 50px; height: 50px;" alt="User Avatar">
+          {% else %}
+          <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" class="rounded-circle border" style="width: 50px; height: 50px;" alt="Default Avatar">
+          {% endif %}
+        </div>
+
+        <!-- Content -->
+        <div class="flex-grow-1">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="mb-0">{{ feedback.user.username }}</h6>
+              <small class="text-muted">{{ feedback.created_at }}</small>
+              <div class="star-display" title="{{ feedback.rating }} out of 5">
+                {% for i in "12345" %}
+                {% if forloop.counter <= feedback.rating %}
+                <span class="star filled">★</span>
+                {% else %}
+                <span class="star">★</span>
+                {% endif %}
+                {% endfor %}
+                <span class="rating-text">({{ feedback.rating }})</span>
+              </div>
+            </div>
+            {% if feedback.user != request.user %}
+            <a href="#" class="text-decoration-none text-secondary small">
+              <i class="bx bxs-share me-1"></i>Reply
+            </a>
+            {% endif %}
+          </div>
+          <div class="mt-3 p-3 bg-light rounded border">
+            {{ feedback.comment }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="text-center text-muted py-4">
+  <p>No feedback yet. Be the first to comment!</p>
+</div>
+{% endif %}
+
+<div class="row pb-4">
+  <div class="worksingle-comment-footer col-lg-8 m-auto">
+    <h4 class="h5">Leave Comment</h4>
+    <form class="col-md-12 m-auto" method="POST" action="{% url 'send_review' product.id %}" role="form">
+      {% csrf_token %}
+
+      <div class="form-group mb-3">
+        <label for="rating">Rating</label>
+        <div class="rating-selector">
+          <div class="star-rating" role="group" aria-label="Rating">
+            <input type="radio" class="star-input" name="rating" id="rating5" value="5" required>
+            <label class="star-label" for="rating5" title="5 stars">★</label>
+
+            <input type="radio" class="star-input" name="rating" id="rating4" value="4">
+            <label class="star-label" for="rating4" title="4 stars">★</label>
+
+            <input type="radio" class="star-input" name="rating" id="rating3" value="3">
+            <label class="star-label" for="rating3" title="3 stars">★</label>
+
+            <input type="radio" class="star-input" name="rating" id="rating2" value="2">
+            <label class="star-label" for="rating2" title="2 stars">★</label>
+
+            <input type="radio" class="star-input" name="rating" id="rating1" value="1">
+            <label class="star-label" for="rating1" title="1 star">★</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <textarea class="form-control form-control-lg light-300" id="review_text" name="review_text" placeholder="Your Comment" rows="5" required></textarea>
+      </div>
+
+      <div class="form-row pt-2">
+        <div class="col-md-12 col-10 text-end">
+          <button type="submit" class="btn btn-secondary text-white px-md-4 px-2 py-md-3 py-1 radius-0 light-300">Send</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
