@@ -21,7 +21,7 @@ urlpatterns = [
     path('user_products/', user_products_view, name='user_products'),
     path('user_product_deactivation/<int:product_id>/', user_product_deactivation, name='user_product_deactivation'),
     path('user_product_activation/<int:product_id>/', user_product_activation, name='user_product_activation'),
-    path('user_product_delete/<int:product_id>/', user_product_deletion, name='user_product_delete'),
+    path('user_product_delete/<int:product_id>/', user_product_deletion, name='user_product_deletion'),
     path('user_product_edit/<int:product_id>/', user_product_edit, name='user_product_edit'),
 
     # Filters

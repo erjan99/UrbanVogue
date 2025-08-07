@@ -30,7 +30,7 @@ def index_view(request):
         else:
             product.average_rating = 0
 
-    paginator = Paginator(products, 8)
+    paginator = Paginator(products, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -156,11 +156,7 @@ def create_product_view(request):
     })
 
 def user_products_view(request):
-    products = Product.objects.filter(user=request.user, is_active=True)
-
-    # Restore syncing between available_colors and color
-    for product in products:
-        product.color.set(product.available_colors.all())
+    products = Product.objects.filter(user=request.user)  # Show all products, active and inactive
 
     return render(request, 'mainPages/user_products.html', context={'products': products})
 

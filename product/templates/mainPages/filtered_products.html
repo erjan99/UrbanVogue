@@ -35,172 +35,177 @@
   </div>
 
 
-<div class="row justify-content-center" style="font-family: 'Montserrat', sans-serif;">
-  {% if filter.qs %}
-  {% for product in filter.qs %}
-  <div class="col-12 col-md-6 col-lg-4 mb-4">
-    <div class="card product-card h-100 shadow-sm" style="font-family: 'Montserrat', sans-serif;">
-      <a href="{% url 'detail_view' product.id %}">
-        <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="product-img w-100">
-      </a>
-      <div class="card-body d-flex flex-column">
-        <div class="mb-1 brand-category">
-          <span style="font-weight: bold">{{ product.brand.name }}</span> • <span style="font-weight: bold">{{ product.category.name }}</span>
-        </div>
-        <div class="product-title mb-1" ><span style="font-weight: bold">{{ product.name }}</span></div>
-        <p class="product-description">{{ product.description|truncatechars:80 }}</p>
-
-        <div class="mt-auto">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="product-price" style="font-weight: bold; background: linear-gradient(45deg, #2691ff, #0172ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${{ product.price }}</span>
-            {% if product.gender %}
-            <span class="gender-text" style="font-weight: bold">{{ product.get_gender_display }}</span>
-            {% endif %}
+  <div class="row justify-content-center" style="font-family: 'Montserrat', sans-serif;">
+    {% if filter.qs %}
+    {% for product in filter.qs %}
+    <div class="col-12 col-md-6 col-lg-4 mb-4">
+      <div class="card product-card h-100 shadow-sm" style="font-family: 'Montserrat', sans-serif;">
+        <a href="{% url 'detail_view' product.id %}">
+          <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="product-img w-100">
+        </a>
+        <div class="card-body d-flex flex-column">
+          <div class="mb-1 brand-category">
+            <span style="font-weight: bold">{{ product.brand.name }}</span> • <span style="font-weight: bold">{{ product.category.name }}</span>
           </div>
+          <div class="product-title mb-1" ><span style="font-weight: bold">{{ product.name }}</span></div>
+          <p class="product-description">{{ product.description|truncatechars:80 }}</p>
 
-          <div class="rating mb-2">
-            <i class="fa fa-star text-warning"></i>
-            <i class="fa fa-star text-warning"></i>
-            <i class="fa fa-star text-warning"></i>
-            <i class="fa fa-star text-warning"></i>
-            <i class="fa fa-star text-muted"></i>
-            <small class="text-muted ms-1">({{ product.reviews.count }})</small>
-          </div>
+          <div class="mt-auto">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="product-price" style="font-weight: bold; background: linear-gradient(45deg, #2691ff, #0172ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${{ product.price }}</span>
+              {% if product.gender %}
+              <span class="gender-text" style="font-weight: bold">{{ product.get_gender_display }}</span>
+              {% endif %}
+            </div>
 
-          <div class="mb-2">
-            <small class="text-muted fw-bold">Sizes:</small>
-            {% for size in product.available_sizes.all|slice:":3" %}
-            <span class="size-badge">{{ size.code }}</span>
-            {% endfor %}
-            {% if product.available_sizes.count > 3 %}
-            <small class="text-muted">+{{ product.available_sizes.count|add:"-3" }} more</small>
-            {% endif %}
-          </div>
+            <div class="rating mb-2">
+              {% if product.reviews.count > 0 %}
+                {% for i in "12345"|slice:":product.average_rating|default:0" %}
+                  <i class="fa fa-star text-warning"></i>
+                {% endfor %}
+                {% for i in "12345"|slice:":5-product.average_rating|default:0" %}
+                  <i class="fa fa-star text-muted"></i>
+                {% endfor %}
+                <small class="text-muted ms-1">({{ product.reviews.count }})</small>
+              {% else %}
+                <span class="text-muted">No reviews yet</span>
+              {% endif %}
+            </div>
 
-          <div>
-            <small class="text-muted fw-bold">Colors:</small>
-            {% for color in product.color.all|slice:":4" %}
-            <span class="color-dot" style="background-color: {{ color.hex_code }}" title="{{ color.color }}"></span>
-            {% endfor %}
+            <div class="mb-2">
+              <small class="text-muted fw-bold">Sizes:</small>
+              {% for size in product.available_sizes.all|slice:":3" %}
+              <span class="size-badge">{{ size.code }}</span>
+              {% endfor %}
+              {% if product.available_sizes.count > 3 %}
+              <small class="text-muted">+{{ product.available_sizes.count|add:"-3" }} more</small>
+              {% endif %}
+            </div>
+
+            <div>
+              <small class="text-muted fw-bold">Colors:</small>
+              {% for color in product.color.all|slice:":4" %}
+              <span class="color-dot" style="background-color: {{ color.hex_code }}" title="{{ color.color }}"></span>
+              {% endfor %}
+            </div>
           </div>
         </div>
       </div>
     </div>
+    {% endfor %}
+    {% else %}
+    <div class="col-12 text-center py-5">
+      <h4 class="text-muted">No products match your filters</h4>
+      <a href="{% url 'product_list' %}" class="btn btn-outline-secondary mt-3">Reset Filters</a>
+    </div>
+    {% endif %}
   </div>
-  {% endfor %}
-  {% else %}
-  <div class="col-12 text-center py-5">
-    <h4 class="text-muted">No products match your filters</h4>
-    <a href="{% url 'product_list' %}" class="btn btn-outline-secondary mt-3">Reset Filters</a>
-  </div>
-  {% endif %}
-</div>
 
-<style>
-  .product-card {
-    border: none;
-    border-radius: 1rem;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    padding: 1rem;
-    font-family: 'Montserrat', sans-serif;
-  }
+  <style>
+    .product-card {
+      border: none;
+      border-radius: 1rem;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      padding: 1rem;
+      font-family: 'Montserrat', sans-serif;
+    }
 
-  .product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-  }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    }
 
-  .product-img {
-    height: 300px; /* Increased from 250px */
-    object-fit: cover;
-    border-bottom: 1px solid #eee;
-    border-radius: 0.75rem;
-  }
+    .product-img {
+      height: 300px; /* Increased from 250px */
+      object-fit: cover;
+      border-bottom: 1px solid #eee;
+      border-radius: 0.75rem;
+    }
 
-  .color-dot {
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 1px solid #ccc;
-    margin-right: 6px;
-    vertical-align: middle;
-  }
+    .color-dot {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
 
-  .product-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #333;
-  }
+    .product-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #333;
+    }
 
-  .brand-category {
-    font-size: 0.9rem;
-    color: #888;
-  }
+    .brand-category {
+      font-size: 0.9rem;
+      color: #888;
+    }
 
-  .product-description {
-    font-size: 1rem;
-    color: #666;
-  }
+    .product-description {
+      font-size: 1rem;
+      color: #666;
+    }
 
-  .product-price {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #2691ff;
-    background: linear-gradient(45deg, #2691ff, #0172ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+    .product-price {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #2691ff;
+      background: linear-gradient(45deg, #2691ff, #0172ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-  .gender-text {
-    font-weight: bold;
-    color: #555;
-    font-size: 1rem;
-  }
+    .gender-text {
+      font-weight: bold;
+      color: #555;
+      font-size: 1rem;
+    }
 
-  .size-badge {
-    background-color: #f1f1f1;
-    border: 1px solid #ccc;
-    font-size: 0.9rem;
-    margin-right: 6px;
-    border-radius: 6px;
-    padding: 3px 7px;
-  }
+    .size-badge {
+      background-color: #f1f1f1;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+      margin-right: 6px;
+      border-radius: 6px;
+      padding: 3px 7px;
+    }
 
-  .rating i {
-    font-size: 1rem;
-  }
-</style>
+    .rating i {
+      font-size: 1rem;
+    }
+  </style>
 
 
-<style>
-  #product-filter-form .form-label {
-    font-size: 0.95rem;
-  }
+  <style>
+    #product-filter-form .form-label {
+      font-size: 0.95rem;
+    }
 
-  #product-filter-form select,
-  #product-filter-form input {
-    border-radius: 0.5rem !important;
-    padding: 0.6rem 1rem;
-    border: 1px solid #ced4da;
-    background-color: #f8f9fa;
-  }
+    #product-filter-form select,
+    #product-filter-form input {
+      border-radius: 0.5rem !important;
+      padding: 0.6rem 1rem;
+      border: 1px solid #ced4da;
+      background-color: #f8f9fa;
+    }
 
-  #product-filter-form input:focus,
-  #product-filter-form select:focus {
-    border-color: #198754;
-    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
-  }
+    #product-filter-form input:focus,
+    #product-filter-form select:focus {
+      border-color: #198754;
+      box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    }
 
-  .btn-success:hover {
-    background-color: #157347;
-  }
+    .btn-success:hover {
+      background-color: #157347;
+    }
 
-  .btn-outline-danger:hover {
-    background-color: #dc3545;
-    color: #fff;
-  }
-</style>
+    .btn-outline-danger:hover {
+      background-color: #dc3545;
+      color: #fff;
+    }
+  </style>
 
 {% endblock %}
